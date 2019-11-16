@@ -1,0 +1,121 @@
+if (digitalRead(36) == LOW)
+  {
+
+    if (cars < 10)
+    {
+       digitalWrite(33,HIGH);
+      delay(500);
+      digitalWrite(33,LOW);
+      for (pos = 0; pos <= 110; pos += 1) { // goes from 0 degrees to 180 degrees
+        // in steps of 1 degree
+        myservo.write(pos);    // tell servo to go to position in variable 'pos'
+        delay(10);             // waits 15ms for the servo to reach the position
+      }
+      delay(1000);
+      cars = cars + 1;
+        if(digitalRead(25)==LOW)
+  {
+    park=1;
+   SerialBT.write(park);
+   lcd.setCursor(1,1);
+   lcd.print("Park on No 1");
+  }
+ else  if(digitalRead(26)==LOW)
+  {
+    park=2;
+    SerialBT.write(park);
+     lcd.setCursor(1,1);
+   lcd.print("Park on No 2");
+  }
+else  if(digitalRead(27)==LOW)
+  {
+    park=3;
+   SerialBT.write(park);
+    lcd.setCursor(1,1);
+   lcd.print("Park on No 3");
+  }
+     
+      // set the fields with the values
+      ThingSpeak.setField(1, cars);
+       ThingSpeak.setField(2, 10-cars);
+
+      // figure out the status message
+
+      // set the status
+      ThingSpeak.setStatus(myStatus);
+
+      // write to the ThingSpeak channel
+      int x = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
+      if (x == 200) {
+        Serial.println("Channel update successful.");
+      }
+      else {
+        Serial.println("Problem updating channel. HTTP error code " + String(x));
+      }
+      lcd.setCursor(14, 0);
+      lcd.print(cars);
+      lcd.print("  ");
+       digitalWrite(33,HIGH);
+      delay(500);
+      digitalWrite(33,LOW); 
+      for (pos = 110; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+        myservo.write(pos);    // tell servo to go to position in variable 'pos'
+        delay(10);             // waits 15ms for the servo to reach the position
+
+      }
+      while (digitalRead(36) == LOW)
+      {
+
+      }
+    }
+    else
+    {
+      lcd.clear();
+      lcd.print("Parking Full");
+       digitalWrite(33,HIGH);
+      delay(500);
+      digitalWrite(33,LOW);
+    }
+  }
+  if (digitalRead(39) == LOW)
+  {
+    cars = cars - 1;
+    lcd.setCursor(14, 0);
+     if (cars < 0)
+    {
+      cars = 0;
+    }
+    lcd.print(cars);
+    lcd.print("  ");
+    digitalWrite(33,HIGH);
+      delay(500);
+      digitalWrite(33,LOW);
+      SerialBT.write(cars);
+      // set the fields with the values
+      ThingSpeak.setField(1, cars);
+       ThingSpeak.setField(2, 10-cars);
+
+      // figure out the status message
+
+      // set the status
+      ThingSpeak.setStatus(myStatus);
+
+      // write to the ThingSpeak channel
+      int x = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
+      if (x == 200) {
+        Serial.println("Channel update successful.");
+      }
+      else {
+        Serial.println("Problem updating channel. HTTP error code " + String(x));
+      }
+      lcd.setCursor(14, 0);
+      lcd.print(cars);
+      lcd.print("  ");
+    while (digitalRead(39) == LOW)
+  {
+      delay(1000);
+  }
+  }
+
+  // Wait 20 seconds to update the channel again
+}
